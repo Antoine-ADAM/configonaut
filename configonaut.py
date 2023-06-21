@@ -60,7 +60,7 @@ class Configonaut:
 
         Parameters
         ----------
-        key : str or int
+        key : str or int or slice
             Key or index of the item.
 
         Returns
@@ -68,6 +68,9 @@ class Configonaut:
         Config or value
             If the item is a dictionary, return a new Config instance; otherwise, return the item's value.
         """
+        if isinstance(key, slice):
+            key, default = key.start, key.stop
+            return self.get(key, default, save=True)
         if isinstance(key, int):
             key = list(self.current_dict.keys())[key]
         if key not in self.current_dict:
@@ -149,10 +152,10 @@ class Configonaut:
             If the item is a dictionary, return a new Config instance; otherwise, return the item's value.
         """
         try:
-            return self[key]
+            return self._handle_dict_item(key)
         except KeyError:
             if save:
-                self[key] = default
+                self.current_dict[key] = default
             return default
 
     def get_root(self):

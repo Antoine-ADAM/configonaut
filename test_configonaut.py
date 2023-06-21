@@ -18,6 +18,11 @@ class TestConfigonaut(unittest.TestCase):
         db_config = self.config['database']
         self.assertEqual(db_config.to_value(), {'host': 'localhost', 'port': 5432})
 
+    def test_slice_default(self):
+        default_value = self.config['nonexistent_key':'default_value']
+        self.assertEqual(default_value, 'default_value')
+        self.assertEqual(self.config['nonexistent_key'], 'default_value')
+
     def test_set_item(self):
         self.config['database']['host'] = '127.0.0.1'
         self.config.save()
